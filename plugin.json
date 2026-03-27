@@ -65,6 +65,10 @@
       {
         "name": "wt-blockers",
         "description": "View blocker list"
+      },
+      {
+        "name": "wt-help",
+        "description": "Show help for all commands"
       }
     ]
   }

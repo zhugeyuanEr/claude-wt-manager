@@ -35,6 +35,7 @@ Level 3: thread-advanced (高级功能)
 | `/wt-dev` | 启动/继续开发 | 是 |
 | `/wt-commit` | 提交当前更改 | 是 |
 | `/wt-blockers` | 查看阻塞清单 | 是 |
+| `/wt-help` | 显示所有命令帮助 | 否 |
 
 ## 自动检测
 
