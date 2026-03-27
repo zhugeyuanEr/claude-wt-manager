@@ -2,9 +2,24 @@
 
 **[English](./INSTALL.md) | [中文](./INSTALL-CN.md) | [README](./README.md) | [快速参考](./WORKTREE-QUICKSTART.md)**
 
-## 在新机器上配置
+## 全局安装（推荐）
 
-### 步骤 1：克隆项目
+全局安装后，在任意 Git 项目中都可以使用 WT Manager 命令。
+
+```bash
+# 在 claude-wt-manager 目录中执行
+cd claude-wt-manager
+bash scripts/wt-install.sh
+```
+
+卸载：
+```bash
+bash scripts/wt-uninstall.sh
+```
+
+---
+
+## 在新机器上配置
 
 ```bash
 git clone https://github.com/zhugeyuanEr/claude-wt-manager.git

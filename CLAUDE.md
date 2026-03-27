@@ -2,6 +2,16 @@
 
 Claude Code 命令集，用于管理多线程 Git Worktree 开发。
 
+## 安装
+
+```bash
+# 全局安装（在任意项目中使用）
+bash scripts/wt-install.sh
+
+# 卸载
+bash scripts/wt-uninstall.sh
+```
+
 ## 核心概念
 
 - **Worktree**：Git 工作树，允许同时在多个分支上工作
@@ -25,6 +35,7 @@ Level 3: thread-advanced (高级功能)
 | 命令 | 描述 | 自动检测 |
 |------|------|----------|
 | `/wt-plan` | 分析项目，生成 worktree 规划 | 否 |
+| `/wt-list` | 查看 worktree 列表 | 否 |
 | `/wt-status` | 显示所有 worktree 状态 | 否 |
 | `/wt-progress` | 检查进度 | 是 |
 | `/wt-qa` | 质量检查 | 是 |
@@ -35,6 +46,7 @@ Level 3: thread-advanced (高级功能)
 | `/wt-dev` | 启动/继续开发 | 是 |
 | `/wt-commit` | 提交当前更改 | 是 |
 | `/wt-blockers` | 查看阻塞清单 | 是 |
+| `/wt-switch` | 切换到指定 worktree | 否 |
 | `/wt-help` | 显示所有命令帮助 | 否 |
 
 ## 自动检测
