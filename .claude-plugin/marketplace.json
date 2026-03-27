@@ -1,0 +1,43 @@
+{
+  "$schema": "https://anthropic.com/claude-code/marketplace.schema.json",
+  "name": "claude-wt-manager",
+  "description": "Claude Code 多线 Git Worktree 管理命令集，支持依赖感知的合并顺序",
+  "owner": {
+    "name": "zhugeyuanEr",
+    "email": "zhugeyuanEr@github"
+  },
+  "metadata": {
+    "description": "Claude Code 命令集，用于管理多线程 Git worktree 开发，支持依赖感知的合并顺序"
+  },
+  "plugins": [
+    {
+      "name": "claude-wt-manager",
+      "source": "./",
+      "description": "11 个 slash 命令用于管理 Git worktree：wt-plan、wt-status、wt-progress、wt-qa、wt-batch-qa、wt-contract、wt-merge-check、wt-report、wt-dev、wt-commit、wt-blockers",
+      "version": "1.0.0",
+      "author": {
+        "name": "zhugeyuanEr",
+        "email": "zhugeyuanEr@github"
+      },
+      "homepage": "https://github.com/zhugeyuanEr/claude-wt-manager",
+      "repository": "https://github.com/zhugeyuanEr/claude-wt-manager",
+      "license": "MIT",
+      "keywords": [
+        "worktree",
+        "git",
+        "multi-thread",
+        "parallel-development",
+        "slash-commands"
+      ],
+      "category": "workflow",
+      "tags": [
+        "worktree",
+        "git",
+        "multi-thread",
+        "parallel-development",
+        "slash-commands"
+      ],
+      "strict": false
+    }
+  ]
+}

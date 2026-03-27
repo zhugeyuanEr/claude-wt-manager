@@ -1,0 +1,19 @@
+{
+  "name": "claude-wt-manager",
+  "version": "1.0.0",
+  "description": "Claude Code 多线 Git Worktree 管理命令集，支持并行开发和依赖感知的合并顺序",
+  "author": {
+    "name": "zhugeyuanEr",
+    "url": "https://github.com/zhugeyuanEr"
+  },
+  "homepage": "https://github.com/zhugeyuanEr/claude-wt-manager",
+  "repository": "https://github.com/zhugeyuanEr/claude-wt-manager",
+  "license": "MIT",
+  "keywords": [
+    "claude-code",
+    "worktree",
+    "git",
+    "multi-thread",
+    "development"
+  ]
+}

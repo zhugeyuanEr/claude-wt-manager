@@ -2,8 +2,6 @@
 
 Claude Code 命令集，用于管理多线程 Git Worktree 开发。
 
-**[README](./README.md) | [安装指南](./INSTALL.md) | [快速参考](./WORKTREE-QUICKSTART.md)**
-
 ## 核心概念
 
 - **Worktree**：Git 工作树，允许同时在多个分支上工作
@@ -13,13 +11,13 @@ Claude Code 命令集，用于管理多线程 Git Worktree 开发。
 ## 线程层级
 
 ```
-Level 0: Thread-infra (基础设施)
+Level 0: thread-infra (基础设施)
     ↓
-Level 1: Thread-api (后端 API)
+Level 1: thread-api (后端 API)
     ↓
-Level 2: Thread-ux (前端 UX)
+Level 2: thread-ux (前端 UX)
     ↓
-Level 3: Thread-advanced (高级功能)
+Level 3: thread-advanced (高级功能)
 ```
 
 ## 可用命令
@@ -63,17 +61,3 @@ infra → api → ux → advanced
 | thread-advanced | `THREAD-ADVANCED-PLAN.md` |
 
 **格式**: `THREAD-{线程名大写}-PLAN.md`
-
-## 文件结构
-
-```
-claude-wt-manager/
-├── .claude/commands/   # 11个命令文件
-├── scripts/            # Shell 脚本
-├── plugin.json         # 扩展配置
-└── README.md           # 文档
-```
-
----
-
-**[README](./README.md) | [安装指南](./INSTALL.md) | [快速参考](./WORKTREE-QUICKSTART.md)**

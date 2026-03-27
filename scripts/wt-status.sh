@@ -33,9 +33,9 @@ git worktree list | while IFS= read -r line; do
         if [[ -d "$WT_PATH/.git" ]] || git -C "$WT_PATH" rev-parse --git-dir >/dev/null 2>&1; then
             cd "$WT_PATH" 2>/dev/null
             if git status --porcelain | grep -q .; then
-                WT_STATUS="✗ dirty"
+                WT_STATUS="✗ 脏"
             else
-                WT_STATUS="✓ clean"
+                WT_STATUS="✓ 干净"
             fi
             cd - >/dev/null
         else

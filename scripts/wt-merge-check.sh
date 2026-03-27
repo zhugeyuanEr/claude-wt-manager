@@ -30,17 +30,22 @@ echo ""
 
 cd "$WT_PATH"
 
-# 1. 与 master 同步检查
+# 1. 与 main/master 同步检查
 echo ">>> 同步状态检查..."
-git fetch origin master 2>/dev/null
-MASTER_HASH=$(git rev-parse origin/master 2>/dev/null)
+git fetch origin 2>/dev/null
+
+# 检测默认分支名
+DEFAULT_BRANCH=$(git symbolic-ref refs/remotes/origin/HEAD 2>/dev/null | sed 's|refs/remotes/origin/||')
+[[ -z "$DEFAULT_BRANCH" ]] && DEFAULT_BRANCH="main"
+
+MASTER_HASH=$(git rev-parse "origin/$DEFAULT_BRANCH" 2>/dev/null)
 BRANCH_HASH=$(git rev-parse HEAD 2>/dev/null)
 
 if [[ "$MASTER_HASH" == "$BRANCH_HASH" ]]; then
-    echo "  ✓ 已与 origin/master 同步"
+    echo "  ✓ 已与远程 $DEFAULT_BRANCH 同步"
 else
-    echo "  ⚠ 落后于 origin/master"
-    BEHIND=$(git rev-list --count HEAD..origin/master 2>/dev/null || echo "?")
+    echo "  ⚠ 落后于远程 $DEFAULT_BRANCH"
+    BEHIND=$(git rev-list --count HEAD.."origin/$DEFAULT_BRANCH" 2>/dev/null || echo "?")
     echo "    落后 $BEHIND 个 commit"
 fi
 

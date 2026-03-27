@@ -61,10 +61,9 @@ git worktree list | grep 'worktree-thread-' | while IFS= read -r line; do
             progress_bar "$PROGRESS"
             echo " $WT_NAME ($WT_BRANCH)"
 
-            # 读取检查点
+            # 读取检查点 (兼容多种格式)
             if [[ -f "$PLAN_FILE" ]]; then
-                # 查找 Checkpoint 部分
-                sed -n '/## 进度检查点/,/^##/p' "$PLAN_FILE" 2>/dev/null | grep "\- \[" | head -5 | sed 's/^/  /'
+                grep -E "^\[.\]|^- \[.\]|^\- \[[ x]\]" "$PLAN_FILE" 2>/dev/null | head -5 | sed 's/^/  /'
             fi
             echo ""
         fi
@@ -75,14 +74,26 @@ echo "---"
 echo ""
 echo "## 接口实现状态"
 echo ""
-grep -E "^\*\*实现方\*\*:" "$WORKTREE_ROOT/INTERFACE-CONTRACT.md" 2>/dev/null | while IFS= read -r line; do
-    prev_line=$(grep -B2 "$line" "$WORKTREE_ROOT/INTERFACE-CONTRACT.md" | head -1)
-    if [[ "$prev_line" =~ ^\*\*路径\*\*:\ \`([^\`]+)\` ]]; then
-        API_PATH="${BASH_REMATCH[1]}"
-        IMPL_BY=$(echo "$line" | sed 's/\*\*实现方\*\*://' | sed 's/(//' | sed 's/)//' | xargs)
+
+# 兼容多种接口文件格式
+if [[ -f "$WORKTREE_ROOT/INTERFACE-CONTRACT.md" ]]; then
+    grep -E "^\*\*实现方\*\*:|^Implementation:|^Implemented By:" "$WORKTREE_ROOT/INTERFACE-CONTRACT.md" 2>/dev/null | while IFS= read -r line; do
+        prev_line=$(grep -B2 "$line" "$WORKTREE_ROOT/INTERFACE-CONTRACT.md" | head -1)
+        if [[ "$prev_line" =~ ^\*\*路径\*\*:\ \`([^\`]+)\` ]]; then
+            API_PATH="${BASH_REMATCH[1]}"
+        elif [[ "$prev_line" =~ ^Path:\ \`([^\`]+)\` ]]; then
+            API_PATH="${BASH_REMATCH[1]}"
+        elif [[ "$prev_line" =~ ^\*\*路径\*\*:\ (.+) ]]; then
+            API_PATH="${BASH_REMATCH[1]}"
+        else
+            API_PATH="未知"
+        fi
+        IMPL_BY=$(echo "$line" | sed -E 's/^\*\*实现方\*\*:|^Implementation:|^Implemented By://' | sed 's/(//' | sed 's/)//' | xargs)
         echo "- [ ] $API_PATH → $IMPL_BY"
-    fi
-done
+    done
+else
+    echo "(无 INTERFACE-CONTRACT.md)"
+fi
 
 echo ""
 echo "---"

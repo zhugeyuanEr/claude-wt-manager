@@ -56,17 +56,18 @@ for thread in $THREADS; do
         PLAN_FILE="$WT_PATH/THREAD-${thread^^}-PLAN.md"
 
         if [[ -f "$PLAN_FILE" ]]; then
-            # 提取线程名称
-            THREAD_NAME=$(grep "^> 分支:" "$PLAN_FILE" | head -1 | sed 's/> 分支://' | xargs)
+            # 提取线程名称 (兼容多种格式)
+            THREAD_NAME=$(grep -E "^##?\s*线程|^\*\*线程\*\*|^> 分支:" "$PLAN_FILE" 2>/dev/null | head -1 | sed -E 's/^.*://' | xargs)
+            [[ -z "$THREAD_NAME" ]] && THREAD_NAME="$thread"
 
             # 计算进度
             PROGRESS=$(parse_progress "$PLAN_FILE")
             progress_bar "$PROGRESS"
             echo "  $thread ($THREAD_NAME)"
 
-            # 显示检查点状态
+            # 显示检查点状态 (兼容多种格式)
             echo "    检查点:"
-            grep -E "^\[.\]" "$PLAN_FILE" 2>/dev/null | head -4 | sed 's/^/      /'
+            grep -E "^\[.\]|^- \[.\]" "$PLAN_FILE" 2>/dev/null | head -4 | sed 's/^/      /'
         else
             echo "⚠ $thread - 无计划文件"
         fi
