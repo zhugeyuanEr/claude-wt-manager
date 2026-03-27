@@ -1,0 +1,67 @@
+{
+  "name": "claude-wt-manager",
+  "version": "1.0.0",
+  "displayName": "Claude WT Manager",
+  "description": "Claude Code slash commands for managing multiple Git worktrees in parallel AI-assisted development",
+  "publisher": "zhugeyuanEr",
+  "repository": "https://github.com/zhugeyuanEr/claude-wt-manager",
+  "keywords": [
+    "claude",
+    "worktree",
+    "git",
+    "multi-thread",
+    "development",
+    "claude-wt-manager"
+  ],
+  "engines": {
+    "claude-code": ">=1.0.0"
+  },
+  "categories": [
+    "Development",
+    "Productivity"
+  ],
+  "contributes": {
+    "commands": [
+      {
+        "name": "wt-plan",
+        "description": "Analyze project and generate worktree plan"
+      },
+      {
+        "name": "wt-status",
+        "description": "Show all worktree status"
+      },
+      {
+        "name": "wt-progress",
+        "description": "Check worktree progress"
+      },
+      {
+        "name": "wt-qa",
+        "description": "Quality inspection"
+      },
+      {
+        "name": "wt-contract",
+        "description": "Interface contract checking"
+      },
+      {
+        "name": "wt-merge-check",
+        "description": "Pre-merge validation"
+      },
+      {
+        "name": "wt-report",
+        "description": "Generate full progress report"
+      },
+      {
+        "name": "wt-dev",
+        "description": "Start or continue development"
+      },
+      {
+        "name": "wt-commit",
+        "description": "Commit current changes"
+      },
+      {
+        "name": "wt-blockers",
+        "description": "View blocker list"
+      }
+    ]
+  }
+}

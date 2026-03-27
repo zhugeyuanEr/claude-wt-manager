@@ -1,0 +1,25 @@
+{
+  "name": "claude-wt-manager",
+  "version": "1.0.0",
+  "description": "Claude Code slash commands for managing multiple Git worktrees in parallel AI-assisted development",
+  "scripts": {
+    "test": "echo \"No tests specified\""
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/zhugeyuanEr/claude-wt-manager"
+  },
+  "keywords": [
+    "claude",
+    "claude-code",
+    "worktree",
+    "git",
+    "multi-thread",
+    "development"
+  ],
+  "author": "zhugeyuanEr",
+  "license": "MIT",
+  "engines": {
+    "claude-code": ">=1.0.0"
+  }
+}
