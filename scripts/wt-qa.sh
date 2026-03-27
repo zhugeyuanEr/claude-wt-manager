@@ -1,49 +1,37 @@
 #!/bin/bash
 # wt-qa.sh - 质量检测
 
-TARGET="${1:-}"
-WORKTREE_ROOT="$(git rev-parse --show-toplevel 2>/dev/null)"
-CURRENT_DIR="$(pwd)"
+source "$(dirname "${BASH_SOURCE[0]}")/wt-lib.sh"
 
-# 自动检测当前 worktree
+TARGET="${1:-}"
+[[ -z "$TARGET" ]] && TARGET="$(wt_detect)"
+
 if [[ -z "$TARGET" ]]; then
-    if [[ "$CURRENT_DIR" =~ /worktree-([a-zA-Z0-9_-]+) ]]; then
-        TARGET="${BASH_REMATCH[1]}"
-    else
-        echo "错误: 请指定 worktree 名称，或在 worktree 目录中运行"
-        exit 1
-    fi
+    echo "错误: 请指定 worktree 名称，或在 worktree 目录中运行"
+    exit 1
 fi
 
-WT_PATH="$WORKTREE_ROOT/worktree-thread-$TARGET"
+WT_PATH="$(wt_path "$TARGET")"
 
 if [[ ! -d "$WT_PATH" ]]; then
     echo "错误: worktree-thread-$TARGET 不存在"
     exit 1
 fi
 
-echo "==============================================="
-echo "       质量检测: $TARGET"
-echo "==============================================="
-echo ""
-
+wt_header "质量检测: $TARGET"
 cd "$WT_PATH"
 
 # 代码规范检查
 echo ">>> 代码规范检查..."
 
-# TypeScript 检查
 if [[ -f "package.json" ]] && grep -q '"typescript"' package.json 2>/dev/null; then
     echo "  [TypeScript] 检查..."
     npx tsc --noEmit 2>/dev/null || echo "    ⚠ TSC 检查跳过"
 fi
 
-# Python 检查
 if [[ -d "backend" ]] && [[ -f "backend/requirements.txt" ]]; then
     echo "  [Python] 检查..."
-    if command -v ruff &>/dev/null; then
-        ruff check backend/ 2>/dev/null || echo "    ⚠ Ruff 检查有警告"
-    fi
+    command -v ruff &>/dev/null && ruff check backend/ 2>/dev/null || echo "    ⚠ Ruff 检查跳过"
 fi
 
 # 测试检查
@@ -66,6 +54,5 @@ else
     echo "$GIT_STATUS" | head -10 | sed 's/^/    /'
 fi
 
-echo ""
-echo "==============================================="
-cd "$WORKTREE_ROOT" >/dev/null
+wt_footer
+cd "$WT_ROOT" >/dev/null

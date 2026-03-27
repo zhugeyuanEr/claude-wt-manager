@@ -1,40 +1,30 @@
 #!/bin/bash
 # wt-merge-check.sh - 合并前检查
 
-TARGET="${1:-}"
-WORKTREE_ROOT="$(git rev-parse --show-toplevel 2>/dev/null)"
-CURRENT_DIR="$(pwd)"
+source "$(dirname "${BASH_SOURCE[0]}")/wt-lib.sh"
 
-# 自动检测
+TARGET="${1:-}"
+[[ -z "$TARGET" ]] && TARGET="$(wt_detect)"
+
 if [[ -z "$TARGET" ]]; then
-    if [[ "$CURRENT_DIR" =~ /worktree-([a-zA-Z0-9_-]+) ]]; then
-        TARGET="${BASH_REMATCH[1]}"
-    else
-        echo "错误: 请指定 worktree 名称"
-        exit 1
-    fi
+    echo "错误: 请指定 worktree 名称"
+    exit 1
 fi
 
-WT_PATH="$WORKTREE_ROOT/worktree-thread-$TARGET"
-WT_BRANCH="feature/thread-$TARGET"
+WT_PATH="$(wt_path "$TARGET")"
 
 if [[ ! -d "$WT_PATH" ]]; then
     echo "错误: worktree-thread-$TARGET 不存在"
     exit 1
 fi
 
-echo "==============================================="
-echo "       合并前检查: $TARGET"
-echo "==============================================="
-echo ""
-
+wt_header "合并前检查: $TARGET"
 cd "$WT_PATH"
 
 # 1. 与 main/master 同步检查
 echo ">>> 同步状态检查..."
 git fetch origin 2>/dev/null
 
-# 检测默认分支名
 DEFAULT_BRANCH=$(git symbolic-ref refs/remotes/origin/HEAD 2>/dev/null | sed 's|refs/remotes/origin/||')
 [[ -z "$DEFAULT_BRANCH" ]] && DEFAULT_BRANCH="main"
 
@@ -64,11 +54,7 @@ fi
 echo ""
 echo ">>> 工作区状态..."
 STATUS=$(git status --porcelain)
-if [[ -z "$STATUS" ]]; then
-    echo "  ✓ 工作区干净"
-else
-    echo "  ⚠ 有未提交的更改"
-fi
+[[ -z "$STATUS" ]] && echo "  ✓ 工作区干净" || echo "  ⚠ 有未提交的更改"
 
 # 4. 分支信息
 echo ""
@@ -77,6 +63,5 @@ echo "  当前分支: $(git branch --show-current)"
 echo "  提交历史: $(git rev-list --count HEAD) commits"
 echo "  最新提交: $(git log -1 --oneline 2>/dev/null | head -c 60)..."
 
-echo ""
-echo "==============================================="
-cd "$WORKTREE_ROOT" >/dev/null
+wt_footer
+cd "$WT_ROOT" >/dev/null

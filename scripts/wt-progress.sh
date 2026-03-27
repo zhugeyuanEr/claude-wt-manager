@@ -1,71 +1,35 @@
 #!/bin/bash
 # wt-progress.sh - 检查各线程进度
 
-WORKTREE_ROOT="$(git rev-parse --show-toplevel 2>/dev/null)"
+source "$(dirname "${BASH_SOURCE[0]}")/wt-lib.sh"
 
-echo "==============================================="
+echo ""
+wt_divider
 echo "       多线开发进度报告"
-echo "==============================================="
+wt_divider
 echo ""
 
-# 进度条函数
-progress_bar() {
-    local pct=$1
-    local width=30
-    local filled=$((width * pct / 100))
-    local empty=$((width - filled))
-
-    printf "["
-    for ((i=0; i<filled; i++)); do printf "█"; done
-    for ((i=0; i<empty; i++)); do printf "░"; done
-    printf "] %3d%%" "$pct"
-}
-
-# 解析 checkpoint 完成度
-parse_progress() {
-    local plan_file="$1"
-    if [[ ! -f "$plan_file" ]]; then
-        echo "0"
-        return
-    fi
-
-    local total=$(grep -c "\[ \]\|\[x\]" "$plan_file" 2>/dev/null || echo "0")
-    local done=$(grep -c "\[x\]" "$plan_file" 2>/dev/null || echo "0")
-
-    if [[ "$total" -eq 0 ]]; then
-        echo "0"
-        return
-    fi
-
-    echo $((done * 100 / total))
-}
-
-# 获取线程列表
-THREADS=$(git worktree list | grep -o 'worktree-thread-[a-z]*' | sed 's/worktree-//' 2>/dev/null)
+THREADS=$(wt_list_threads)
 
 if [[ -z "$THREADS" ]]; then
     echo "未找到任何 worktree-thread-*"
     exit 0
 fi
 
-# 显示各线程进度
 for thread in $THREADS; do
-    WT_PATH="$WORKTREE_ROOT/worktree-thread-$thread"
+    WT_PATH="$(wt_path "$thread")"
 
     if [[ -d "$WT_PATH" ]]; then
         PLAN_FILE="$WT_PATH/THREAD-${thread^^}-PLAN.md"
 
         if [[ -f "$PLAN_FILE" ]]; then
-            # 提取线程名称 (兼容多种格式)
             THREAD_NAME=$(grep -E "^##?\s*线程|^\*\*线程\*\*|^> 分支:" "$PLAN_FILE" 2>/dev/null | head -1 | sed -E 's/^.*://' | xargs)
             [[ -z "$THREAD_NAME" ]] && THREAD_NAME="$thread"
 
-            # 计算进度
-            PROGRESS=$(parse_progress "$PLAN_FILE")
-            progress_bar "$PROGRESS"
+            PROGRESS=$(wt_parse_progress "$PLAN_FILE")
+            wt_progress_bar "$PROGRESS"
             echo "  $thread ($THREAD_NAME)"
 
-            # 显示检查点状态 (兼容多种格式)
             echo "    检查点:"
             grep -E "^\[.\]|^- \[.\]" "$PLAN_FILE" 2>/dev/null | head -4 | sed 's/^/      /'
         else
@@ -75,5 +39,6 @@ for thread in $THREADS; do
 done
 
 echo ""
-echo "==============================================="
+wt_divider
 echo "更新于: $(date '+%Y-%m-%d %H:%M')"
+echo ""

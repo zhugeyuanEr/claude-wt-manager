@@ -1,43 +1,30 @@
 #!/bin/bash
 # wt-switch.sh - 切换到指定的 worktree
 
-TARGET="${1:-}"
-WORKTREE_ROOT="$(git rev-parse --show-toplevel 2>/dev/null)"
-CURRENT_DIR="$(pwd)"
+source "$(dirname "${BASH_SOURCE[0]}")/wt-lib.sh"
 
-# 列出所有可用的 worktree
-list_worktrees() {
-    echo "可用 Worktree:"
-    echo ""
-    local idx=1
-    local current=""
-    git worktree list | while IFS= read -r line; do
-        if [[ "$line" =~ ^([^\ ]+)\ \+\[([^\]]+)\]$ ]]; then
-            WT_PATH="${BASH_REMATCH[1]}"
-            WT_BRANCH="${BASH_REMATCH[2]}"
-            if [[ "$WT_PATH" =~ worktree-([a-zA-Z0-9_-]+)$ ]]; then
-                WT_NAME="${BASH_REMATCH[1]}"
-            else
-                WT_NAME="main"
-            fi
-            if [[ "$CURRENT_DIR" == "$WT_PATH" || "$CURRENT_DIR" == "$WT_PATH/"* ]]; then
-                current=" ← 当前"
-            else
-                current=""
-            fi
-            printf "  %2d. %-20s %-25s%s\n" "$idx" "$WT_NAME" "[$WT_BRANCH]" "$current"
-            idx=$((idx + 1))
-        fi
-    done
-}
+TARGET="${1:-}"
 
 # 没有参数时显示列表
 if [[ -z "$TARGET" ]]; then
-    echo "==============================================="
-    echo "       Worktree 切换"
-    echo "==============================================="
+    wt_header "Worktree 切换"
+
+    echo "可用 Worktree:"
     echo ""
-    list_worktrees
+
+    # 使用数组收集结果，避免子 shell 变量丢失问题
+    mapfile -t LINES < <(git worktree list)
+    idx=1
+    for line in "${LINES[@]}"; do
+        RESULT=$(wt_parse_worktree_line "$line")
+        [[ -z "$RESULT" ]] && continue
+
+        IFS='|' read -r WT_NAME WT_PATH WT_BRANCH <<< "$RESULT"
+        [[ "$WT_PATH" == "$WT_CURRENT" || "$WT_CURRENT" == "$WT_PATH/"* ]] && current=" ← 当前" || current=""
+        printf "  %2d. %-20s %-25s%s\n" "$idx" "$WT_NAME" "[$WT_BRANCH]" "$current"
+        idx=$((idx + 1))
+    done
+
     echo ""
     echo "使用方式:"
     echo "  /wt-switch <thread-name>    # 例如: /wt-switch thread-api"
@@ -47,16 +34,14 @@ if [[ -z "$TARGET" ]]; then
     echo "  /wt-switch thread-infra"
     echo "  /wt-switch thread-api"
     echo "  /wt-switch thread-ux"
-    echo "==============================================="
+    wt_footer
     exit 0
 fi
 
 # 支持直接指定 thread 名称
-if [[ ! "$TARGET" =~ ^worktree- ]]; then
-    TARGET="worktree-$TARGET"
-fi
+[[ ! "$TARGET" =~ ^worktree- ]] && TARGET="worktree-$TARGET"
 
-WT_PATH="$WORKTREE_ROOT/$TARGET"
+WT_PATH="$WT_ROOT/$TARGET"
 
 # 检查 worktree 是否存在
 if [[ ! -d "$WT_PATH" ]]; then
@@ -68,16 +53,14 @@ if [[ ! -d "$WT_PATH" ]]; then
 fi
 
 # 检查是否是当前目录
-if [[ "$CURRENT_DIR" == "$WT_PATH" || "$CURRENT_DIR" == "$WT_PATH/"* ]]; then
+if [[ "$WT_CURRENT" == "$WT_PATH" || "$WT_CURRENT" == "$WT_PATH/"* ]]; then
     echo "提示: 已在 $TARGET 中"
     BRANCH=$(git branch --show-current 2>/dev/null)
     echo "当前分支: $BRANCH"
     exit 0
 fi
 
-echo "==============================================="
-echo "       切换到: $TARGET"
-echo "==============================================="
+wt_header "切换到: $TARGET"
 echo ""
 echo "路径: $WT_PATH"
 echo ""
@@ -87,4 +70,4 @@ echo "  cd $WT_PATH"
 echo ""
 echo "或在 Claude Code 中直接继续工作,"
 echo "系统会自动检测当前 worktree。"
-echo "==============================================="
+wt_footer

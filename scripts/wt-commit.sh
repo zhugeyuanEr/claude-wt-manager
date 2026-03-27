@@ -1,24 +1,18 @@
 #!/bin/bash
 # wt-commit.sh - 提交当前 worktree 的更改
 
-WORKTREE_ROOT="$(git rev-parse --show-toplevel 2>/dev/null)"
-CURRENT_DIR="$(pwd)"
+source "$(dirname "${BASH_SOURCE[0]}")/wt-lib.sh"
 
-# 自动检测当前 worktree
-if [[ "$CURRENT_DIR" =~ /worktree-([a-zA-Z0-9_-]+) ]]; then
-    TARGET="${BASH_REMATCH[1]}"
-    WT_PATH="$CURRENT_DIR"
-else
+TARGET="$(wt_detect)"
+if [[ -z "$TARGET" ]]; then
     echo "错误: 请在 worktree 目录中运行此命令"
     exit 1
 fi
 
+WT_PATH="$(wt_path "$TARGET")"
 cd "$WT_PATH"
 
-echo "==============================================="
-echo "       提交更改: $TARGET"
-echo "==============================================="
-echo ""
+wt_header "提交更改: $TARGET"
 
 # 显示 Git 状态
 echo ">>> Git 状态"
@@ -28,8 +22,8 @@ GIT_STATUS=$(git status --porcelain 2>/dev/null)
 if [[ -z "$GIT_STATUS" ]]; then
     echo "✓ 工作区干净，无更改可提交"
     echo ""
-    echo "==============================================="
-    cd "$WORKTREE_ROOT" >/dev/null
+    wt_footer
+    cd "$WT_ROOT" >/dev/null
     exit 0
 fi
 
@@ -37,17 +31,13 @@ echo "变更文件:"
 echo "$GIT_STATUS" | sed 's/^/  /'
 echo ""
 
-# 显示变更统计
 echo ">>> 变更统计"
 echo ""
 
 STATS=$(git diff --stat 2>/dev/null)
-if [[ -n "$STATS" ]]; then
-    echo "$STATS" | sed 's/^/  /'
-fi
+[[ -n "$STATS" ]] && echo "$STATS" | sed 's/^/  /'
 echo ""
 
-# 显示 diff 摘要
 echo ">>> 变更摘要"
 echo ""
 
@@ -91,7 +81,7 @@ fi
 
 # 显示要提交的内容供确认
 echo ""
-echo "==============================================="
+wt_divider
 echo "即将提交:"
 echo ""
 echo "类型: $COMMIT_TYPE"
@@ -104,7 +94,7 @@ echo ""
 read -p "确认提交? (y/n): " confirm
 if [[ "$confirm" != "y" && "$confirm" != "Y" ]]; then
     echo "已取消提交"
-    cd "$WORKTREE_ROOT" >/dev/null
+    cd "$WT_ROOT" >/dev/null
     exit 0
 fi
 
@@ -119,7 +109,5 @@ echo ""
 COMMIT_HASH=$(git rev-parse --short HEAD 2>/dev/null)
 echo "Commit: $COMMIT_HASH"
 
-echo ""
-echo "==============================================="
-
-cd "$WORKTREE_ROOT" >/dev/null
+wt_footer
+cd "$WT_ROOT" >/dev/null

@@ -1,25 +1,22 @@
 #!/bin/bash
 # wt-contract.sh - 接口协议检查
 
-WORKTREE_ROOT="$(git rev-parse --show-toplevel 2>/dev/null)"
-CONTRACT_FILE="$WORKTREE_ROOT/INTERFACE-CONTRACT.md"
+source "$(dirname "${BASH_SOURCE[0]}")/wt-lib.sh"
 
-echo "==============================================="
-echo "       接口协议检查"
-echo "==============================================="
-echo ""
+CONTRACT_FILE="$WT_ROOT/INTERFACE-CONTRACT.md"
+
+wt_header "接口协议检查"
 
 if [[ ! -f "$CONTRACT_FILE" ]]; then
     echo "⚠ 未找到 INTERFACE-CONTRACT.md"
+    wt_footer
     exit 0
 fi
 
 echo "实现的接口:"
 echo ""
 
-# 解析接口实现状态
 grep -E "^\*\*实现方\*\*:" "$CONTRACT_FILE" 2>/dev/null | while IFS= read -r line; do
-    # 获取上一行的接口路径
     prev_line=$(grep -B2 "$line" "$CONTRACT_FILE" | head -1)
     if [[ "$prev_line" =~ ^\*\*路径\*\*:\ \`([^\`]+)\` ]]; then
         API_PATH="${BASH_REMATCH[1]}"
@@ -32,5 +29,4 @@ echo ""
 echo "接口统计:"
 echo "  总接口数: $(grep -c "\*\*路径\*\*:" "$CONTRACT_FILE" 2>/dev/null || echo "0")"
 
-echo ""
-echo "==============================================="
+wt_footer

@@ -1,64 +1,35 @@
 #!/bin/bash
 # wt-batch-qa.sh - 批量质量检测
 
-WORKTREE_ROOT="$(git rev-parse --show-toplevel 2>/dev/null)"
+source "$(dirname "${BASH_SOURCE[0]}")/wt-lib.sh"
+
 FAILED=0
 TOTAL=0
 
-echo "==============================================="
-echo "       批量质量检测"
-echo "==============================================="
-echo ""
+wt_header "批量质量检测"
 
-# 获取所有 worktree
 git worktree list | grep 'worktree-thread-' | while IFS= read -r line; do
-    if [[ "$line" =~ ^([^\ ]+)\ \+\[([^\]]+)\]$ ]]; then
-        WT_PATH="${BASH_REMATCH[1]}"
+    RESULT=$(wt_parse_worktree_line "$line")
+    [[ -z "$RESULT" ]] && continue
 
-        if [[ "$WT_PATH" =~ worktree-thread-([a-zA-Z0-9_-]+)$ ]]; then
-            WT_NAME="${BASH_REMATCH[1]}"
-            TOTAL=$((TOTAL + 1))
+    IFS='|' read -r WT_NAME WT_PATH WT_BRANCH <<< "$RESULT"
+    TOTAL=$((TOTAL + 1))
 
-            echo ">>> 检测: $WT_NAME"
-            cd "$WT_PATH" >/dev/null
+    echo ">>> 检测: $WT_NAME"
+    cd "$WT_PATH" >/dev/null
 
-            # 运行 lint
-            if [[ -f "package.json" ]]; then
-                if npm run lint >/dev/null 2>&1; then
-                    echo "  ✓ Lint 通过"
-                else
-                    echo "  ✗ Lint 失败"
-                    FAILED=$((FAILED + 1))
-                fi
-            fi
-
-            # 运行测试
-            if [[ -f "package.json" ]]; then
-                if npm test >/dev/null 2>&1; then
-                    echo "  ✓ 测试通过"
-                else
-                    echo "  ✗ 测试失败"
-                    FAILED=$((FAILED + 1))
-                fi
-            elif [[ -f "requirements.txt" ]]; then
-                if pytest tests/ -q >/dev/null 2>&1; then
-                    echo "  ✓ 测试通过"
-                else
-                    echo "  ✗ 测试失败"
-                    FAILED=$((FAILED + 1))
-                fi
-            fi
-
-            echo ""
-            cd "$WORKTREE_ROOT" >/dev/null
-        fi
+    if [[ -f "package.json" ]]; then
+        npm run lint >/dev/null 2>&1 && echo "  ✓ Lint 通过" || { echo "  ✗ Lint 失败"; FAILED=$((FAILED + 1)); }
+        npm test >/dev/null 2>&1 && echo "  ✓ 测试通过" || { echo "  ✗ 测试失败"; FAILED=$((FAILED + 1)); }
+    elif [[ -f "requirements.txt" ]]; then
+        pytest tests/ -q >/dev/null 2>&1 && echo "  ✓ 测试通过" || { echo "  ✗ 测试失败"; FAILED=$((FAILED + 1)); }
     fi
+
+    echo ""
+    cd "$WT_ROOT" >/dev/null
 done
 
-echo "==============================================="
+wt_divider
 echo "结果: $((TOTAL - FAILED))/$TOTAL 通过"
-if [[ $FAILED -eq 0 ]]; then
-    echo "✓ 全部通过"
-else
-    echo "⚠ $FAILED 个失败"
-fi
+[[ $FAILED -eq 0 ]] && echo "✓ 全部通过" || echo "⚠ $FAILED 个失败"
+echo ""

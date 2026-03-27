@@ -1,52 +1,25 @@
 #!/bin/bash
 # wt-status.sh - 显示 worktree 状态
 
-WORKTREE_ROOT="$(git rev-parse --show-toplevel 2>/dev/null)"
-CURRENT_DIR="$(pwd)"
-CURRENT_WT=""
+source "$(dirname "${BASH_SOURCE[0]}")/wt-lib.sh"
 
-# 检测当前 worktree
-if [[ "$CURRENT_DIR" =~ /worktree-([a-zA-Z0-9_-]+) ]]; then
-    CURRENT_WT="${BASH_REMATCH[1]}"
-fi
+CURRENT_WT="$(wt_detect)"
 
-echo "==============================================="
-echo "       Worktree 状态概览"
-echo "==============================================="
-echo ""
+wt_header "Worktree 状态概览"
 
-# 获取 worktree 列表
 git worktree list | while IFS= read -r line; do
-    # 解析路径和分支
-    if [[ "$line" =~ ^([^\ ]+)\ \+\[([^\]]+)\]$ ]]; then
-        WT_PATH="${BASH_REMATCH[1]}"
-        WT_BRANCH="${BASH_REMATCH[2]}"
+    RESULT=$(wt_parse_worktree_line "$line")
+    if [[ -n "$RESULT" ]]; then
+        IFS='|' read -r WT_NAME WT_PATH WT_BRANCH <<< "$RESULT"
 
-        # 提取 worktree 名称
-        if [[ "$WT_PATH" =~ worktree-([a-zA-Z0-9_-]+)$ ]]; then
-            WT_NAME="${BASH_REMATCH[1]}"
-        else
-            WT_NAME="main"
-        fi
-
-        # 检查状态
         if [[ -d "$WT_PATH/.git" ]] || git -C "$WT_PATH" rev-parse --git-dir >/dev/null 2>&1; then
-            cd "$WT_PATH" 2>/dev/null
-            if git status --porcelain | grep -q .; then
-                WT_STATUS="✗ 脏"
-            else
-                WT_STATUS="✓ 干净"
-            fi
-            cd - >/dev/null
+            (cd "$WT_PATH" 2>/dev/null && git status --porcelain | grep -q .) && WT_STATUS="✗ 脏" || WT_STATUS="✓ 干净"
         else
             WT_STATUS="? unknown"
         fi
 
-        # 标记当前 worktree
         MARKER=""
-        if [[ "$WT_NAME" == "$CURRENT_WT" ]]; then
-            MARKER=" ← 当前"
-        fi
+        [[ "$WT_NAME" == "$CURRENT_WT" ]] && MARKER=" ← 当前"
 
         printf "%-20s %-25s %s%s\n" "$WT_NAME" "$WT_BRANCH" "$WT_STATUS" "$MARKER"
     else
@@ -55,6 +28,6 @@ git worktree list | while IFS= read -r line; do
 done
 
 echo ""
-echo "当前目录: $CURRENT_DIR"
+echo "当前目录: $WT_CURRENT"
 echo "当前 Worktree: ${CURRENT_WT:-无}"
-echo "==============================================="
+wt_footer

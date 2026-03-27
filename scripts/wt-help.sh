@@ -1,18 +1,15 @@
 #!/bin/bash
 # wt-help.sh - 显示所有可用命令的帮助信息
 
-TARGET="${1:-}"
-WORKTREE_ROOT="$(git rev-parse --show-toplevel 2>/dev/null)"
-SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+source "$(dirname "${BASH_SOURCE[0]}")/wt-lib.sh"
 
-echo "==============================================="
-echo "       WT Manager 帮助"
-echo "==============================================="
-echo ""
+TARGET="${1:-}"
+
+wt_header "WT Manager 帮助"
 
 # 如果指定了命令，显示该命令的帮助
 if [[ -n "$TARGET" ]]; then
-    HELP_FILE="$SCRIPT_DIR/../commands/wt-${TARGET}.md"
+    HELP_FILE="$WT_SCRIPT_DIR/../commands/wt-${TARGET}.md"
 
     if [[ -f "$HELP_FILE" ]]; then
         echo ">>> $TARGET 命令帮助"
@@ -26,7 +23,7 @@ if [[ -n "$TARGET" ]]; then
         echo "         wt-commit, wt-blockers, wt-switch, wt-help"
     fi
     echo ""
-    echo "==============================================="
+    wt_footer
     exit 0
 fi
 
@@ -58,10 +55,10 @@ for cmd in "${COMMANDS[@]}"; do
 done
 
 echo ""
-echo "==============================================="
+wt_footer
 echo ""
 echo "使用方式:"
 echo "  /wt-help              # 显示所有命令"
 echo "  /wt-help <命令名>     # 显示指定命令帮助"
 echo ""
-echo "==============================================="
+wt_divider

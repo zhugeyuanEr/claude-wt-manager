@@ -1,28 +1,18 @@
 #!/bin/bash
 # wt-list.sh - 显示 worktree 列表
 
-WORKTREE_ROOT="$(git rev-parse --show-toplevel 2>/dev/null)"
-CURRENT_DIR="$(pwd)"
+source "$(dirname "${BASH_SOURCE[0]}")/wt-lib.sh"
 
-echo "==============================================="
-echo "       Worktree 列表"
-echo "==============================================="
-echo ""
+CURRENT_WT="$(wt_detect)"
+
+wt_header "Worktree 列表"
 
 git worktree list | while IFS= read -r line; do
-    if [[ "$line" =~ ^([^\ ]+)\ \+\[([^\]]+)\]$ ]]; then
-        WT_PATH="${BASH_REMATCH[1]}"
-        WT_BRANCH="${BASH_REMATCH[2]}"
+    RESULT=$(wt_parse_worktree_line "$line")
+    if [[ -n "$RESULT" ]]; then
+        IFS='|' read -r WT_NAME WT_PATH WT_BRANCH <<< "$RESULT"
 
-        # 提取 worktree 名称
-        if [[ "$WT_PATH" =~ worktree-([a-zA-Z0-9_-]+)$ ]]; then
-            WT_NAME="${BASH_REMATCH[1]}"
-        else
-            WT_NAME="main"
-        fi
-
-        # 标记当前 worktree
-        if [[ "$CURRENT_DIR" == "$WT_PATH" || "$CURRENT_DIR" == "$WT_PATH/"* ]]; then
+        if [[ "$WT_PATH" == "$WT_CURRENT" || "$WT_CURRENT" == "$WT_PATH/"* ]]; then
             echo "  * $WT_NAME  [$WT_BRANCH]  ← 当前"
         else
             echo "    $WT_NAME  [$WT_BRANCH]"
@@ -32,5 +22,4 @@ git worktree list | while IFS= read -r line; do
     fi
 done
 
-echo ""
-echo "==============================================="
+wt_footer
