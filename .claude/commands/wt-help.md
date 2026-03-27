@@ -17,6 +17,7 @@ description: 显示所有可用命令的帮助信息
 | 命令 | 描述 | 自动检测 |
 |------|------|----------|
 | `/wt-plan` | 分析项目，生成 worktree 规划 | 否 |
+| `/wt-list` | 查看 worktree 列表 | 否 |
 | `/wt-status` | 显示所有 worktree 状态 | 否 |
 | `/wt-progress` | 检查进度 | 是 |
 | `/wt-qa` | 质量检查 | 是 |
@@ -27,6 +28,8 @@ description: 显示所有可用命令的帮助信息
 | `/wt-dev` | 启动/继续开发 | 是 |
 | `/wt-commit` | 提交当前更改 | 是 |
 | `/wt-blockers` | 查看阻塞清单 | 是 |
+| `/wt-switch` | 切换到指定 worktree | 否 |
+| `/wt-help` | 显示所有命令帮助 | 否 |
 
 ## 自动检测
 

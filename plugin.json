@@ -69,6 +69,14 @@
       {
         "name": "wt-help",
         "description": "Show help for all commands"
+      },
+      {
+        "name": "wt-list",
+        "description": "List all worktrees"
+      },
+      {
+        "name": "wt-switch",
+        "description": "Switch to a worktree"
       }
     ]
   }
