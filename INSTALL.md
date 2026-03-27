@@ -7,8 +7,8 @@
 ### Step 1: Clone Your Project
 
 ```bash
-git clone https://github.com/your-username/your-project.git
-cd ai_novel_gy
+git clone https://github.com/zhugeyuanEr/claude-wt-manager.git
+cd claude-wt-manager
 ```
 
 ### Step 2: Install Claude WT Manager

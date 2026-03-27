@@ -1,4 +1,4 @@
-# Worktree Quick Reference
+# Worktree 快速参考
 
 **[README](./README.md) | [安装指南](./INSTALL.md) | [CLAUDE](./CLAUDE.md)**
 
