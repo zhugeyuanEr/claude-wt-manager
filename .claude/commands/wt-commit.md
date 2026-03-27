@@ -5,11 +5,11 @@ description: 提交当前 worktree 的更改
 
 ## Context
 
-当前目录: !`pwd`
-当前 worktree: !`bash $(git rev-parse --show-toplevel)/scripts/wt-detect.sh 2>/dev/null || echo ""`
-Git 状态: !`git status`
-Git 分支: !`git branch --show-current`
-最近提交: !`git log --oneline -5`
+当前目录: $(pwd)
+当前 worktree: $(bash "$(git rev-parse --show-toplevel 2>/dev/null)/scripts/wt-detect.sh" 2>/dev/null || echo "unknown")
+Git 状态: $(git status --short 2>/dev/null || echo "无法获取")
+Git 分支: $(git branch --show-current 2>/dev/null || echo "unknown")
+最近提交: $(git log --oneline -5 2>/dev/null || echo "无")
 
 ## Task
 

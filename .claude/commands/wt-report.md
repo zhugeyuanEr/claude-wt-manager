@@ -5,9 +5,9 @@ description: 生成完整的多线开发进度报告
 
 ## Context
 
-项目根目录: !`git rev-parse --show-toplevel`
-Worktree 列表: !`git worktree list`
-接口协议: !`cat $(git rev-parse --show-toplevel)/INTERFACE-CONTRACT.md 2>/dev/null | head -50`
+项目根目录: $(git rev-parse --show-toplevel 2>/dev/null || echo "unknown")
+Worktree 列表: $(git worktree list 2>/dev/null || echo "无法获取")
+接口协议: INTERFACE-CONTRACT.md (在项目根目录)
 
 ## Task
 

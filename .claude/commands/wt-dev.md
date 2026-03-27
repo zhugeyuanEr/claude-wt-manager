@@ -5,9 +5,9 @@ description: 在 worktree 中启动或继续开发
 
 ## Context
 
-当前目录: !`pwd`
-当前 worktree: !`bash $(git rev-parse --show-toplevel)/scripts/wt-detect.sh 2>/dev/null || echo ""`
-Worktree 列表: !`git worktree list`
+当前目录: $(pwd)
+当前 worktree: $(bash "$(git rev-parse --show-toplevel 2>/dev/null)/scripts/wt-detect.sh" 2>/dev/null || echo "unknown")
+Worktree 列表: $(git worktree list 2>/dev/null || echo "无法获取")
 
 ## Task
 

@@ -5,8 +5,8 @@ description: 查看阻塞清单
 
 ## Context
 
-当前目录: !`pwd`
-Worktree 列表: !`git worktree list`
+当前目录: $(pwd)
+Worktree 列表: $(git worktree list 2>/dev/null || echo "无法获取")
 
 ## Task
 

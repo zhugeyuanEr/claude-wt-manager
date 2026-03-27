@@ -5,8 +5,8 @@ description: 批量质量检测
 
 ## Context
 
-项目根目录: !`git rev-parse --show-toplevel`
-Worktree 列表: !`git worktree list`
+项目根目录: $(git rev-parse --show-toplevel 2>/dev/null || echo "unknown")
+Worktree 列表: $(git worktree list 2>/dev/null || echo "无法获取")
 
 ## Task
 

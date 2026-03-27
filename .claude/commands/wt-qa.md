@@ -5,8 +5,8 @@ description: 对当前 worktree 或指定线程进行质量检测
 
 ## Context
 
-当前目录: !`pwd`
-当前 worktree: !`bash $(git rev-parse --show-toplevel)/scripts/wt-detect.sh 2>/dev/null || echo ""`
+当前目录: $(pwd)
+当前 worktree: $(bash "$(git rev-parse --show-toplevel 2>/dev/null)/scripts/wt-detect.sh" 2>/dev/null || echo "unknown")
 
 ## Task
 

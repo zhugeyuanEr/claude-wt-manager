@@ -5,8 +5,8 @@ description: 显示所有 worktree 的当前状态
 
 ## Context
 
-当前目录: !`pwd`
-Worktree 列表: !`git worktree list`
+当前目录: $(pwd)
+Worktree 列表: $(git worktree list 2>/dev/null || echo "无法获取")
 
 ## Task
 

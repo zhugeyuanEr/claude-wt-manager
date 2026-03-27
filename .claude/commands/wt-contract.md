@@ -5,8 +5,8 @@ description: 检查接口协议实现状态
 
 ## Context
 
-项目根目录: !`git rev-parse --show-toplevel`
-接口协议: !`cat $(git rev-parse --show-toplevel)/INTERFACE-CONTRACT.md 2>/dev/null | head -100`
+项目根目录: $(git rev-parse --show-toplevel 2>/dev/null || echo "unknown")
+接口协议: INTERFACE-CONTRACT.md (在项目根目录)
 
 ## Task
 
