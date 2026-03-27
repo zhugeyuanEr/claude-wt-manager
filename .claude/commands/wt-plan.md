@@ -161,8 +161,18 @@ thread-frontend   # 前端 UI + UX
 
 根据分析结果，计算推荐的 worktree 数量：
 
+**计算公式**:
 ```
-推荐线数 = min( max(2, ceil(模块数/3)), 6 )
+MODULE_COUNT = 2  (基础: 前端 + 后端)
+MODULE_COUNT += 1  if 文件数 > 100
+MODULE_COUNT += 1  if 文件数 > 300
+MODULE_COUNT += 1  if 文件数 > 500
+MODULE_COUNT += 1  if 文件数 > 800
+MODULE_COUNT += 1  if 存在 tests/ 目录
+MODULE_COUNT += 1  if 存在 .github/ 目录
+MODULE_COUNT += 1  if 存在 editor 组件
+MODULE_COUNT += 1  if 存在 generation 组件
+MODULE_COUNT = min(MODULE_COUNT, 6)
 ```
 
 **数量约束**:
@@ -252,10 +262,12 @@ thread-frontend  → 前端全部
 ## 依赖关系图
 
 ```
-thread-infra ──┬──▶ thread-api ───▶ thread-ux
-               │
-               └──▶ thread-advanced
+thread-infra ──▶ thread-api ──▶ thread-ux ──▶ thread-advanced
+      │
+      └─────────────────────────────▶ thread-advanced (并行)
 ```
+
+**说明**: thread-advanced 在 thread-infra 完成后可并行开发，但必须最后合并。
 
 ## 开发顺序
 
@@ -263,7 +275,6 @@ thread-infra ──┬──▶ thread-api ───▶ thread-ux
 2. thread-api (Level 1)
 3. thread-ux (Level 2)
 4. thread-advanced (Level 3)
-```
 
 ---
 

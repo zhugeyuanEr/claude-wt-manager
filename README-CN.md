@@ -23,8 +23,10 @@ Thread-infra (Level 0: 基础设施)
     │                   │
     │                   └──▶ Thread-advanced (Level 3: 高级功能)
     │
-    └──▶ Thread-advanced (可直接使用 D 的测试框架)
+    └──────────────────────▶ Thread-advanced (并行)
 ```
+
+**说明**: thread-advanced 可以在 thread-infra 完成后并行开发，但合并顺序必须在最后。
 
 ## 安装
 
@@ -78,6 +80,7 @@ cd your-project/worktree-thread-ux
 | `/wt-status` | 显示所有 worktree 状态 | 否 |
 | `/wt-progress` | 检查进度 | 是 |
 | `/wt-qa` | 质量检查 | 是 |
+| `/wt-batch-qa` | 批量质量检测 | 否 |
 | `/wt-contract` | 接口协议检查 | 否 |
 | `/wt-merge-check` | 合并前验证 | 是 |
 | `/wt-report` | 生成完整进度报告 | 否 |
@@ -402,6 +405,7 @@ claude-wt-manager/
 │       ├── wt-status.md
 │       ├── wt-progress.md
 │       ├── wt-qa.md
+│       ├── wt-batch-qa.md
 │       ├── wt-contract.md
 │       ├── wt-merge-check.md
 │       ├── wt-report.md

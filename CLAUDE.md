@@ -30,6 +30,7 @@ Level 3: Thread-advanced (高级功能)
 | `/wt-status` | 显示所有 worktree 状态 | 否 |
 | `/wt-progress` | 检查进度 | 是 |
 | `/wt-qa` | 质量检查 | 是 |
+| `/wt-batch-qa` | 批量质量检测 | 否 |
 | `/wt-contract` | 接口协议检查 | 否 |
 | `/wt-merge-check` | 合并前验证 | 是 |
 | `/wt-report` | 生成完整进度报告 | 否 |
@@ -50,11 +51,24 @@ Level 3: Thread-advanced (高级功能)
 infra → api → ux → advanced
 ```
 
+**说明**: thread-advanced 在 thread-infra 完成后可并行开发，但必须最后合并。
+
+## PLAN 文件命名
+
+| Thread | PLAN 文件 |
+|--------|----------|
+| thread-infra | `THREAD-INFRA-PLAN.md` |
+| thread-api | `THREAD-API-PLAN.md` |
+| thread-ux | `THREAD-UX-PLAN.md` |
+| thread-advanced | `THREAD-ADVANCED-PLAN.md` |
+
+**格式**: `THREAD-{线程名大写}-PLAN.md`
+
 ## 文件结构
 
 ```
 claude-wt-manager/
-├── .claude/commands/   # 10个命令文件
+├── .claude/commands/   # 11个命令文件
 ├── scripts/            # Shell 脚本
 ├── plugin.json         # 扩展配置
 └── README.md           # 文档

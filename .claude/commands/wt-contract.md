@@ -25,3 +25,34 @@ description: 检查接口协议实现状态
 ```
 
 如果有未实现的接口，给出哪些线程应该实现这些接口。
+
+---
+
+## INTERFACE-CONTRACT.md 格式要求
+
+脚本期望以下格式：
+
+```markdown
+### 接口名称
+
+**路径**: `/api/v1/xxx`
+**方法**: GET/POST/PUT/DELETE
+**实现方**: Thread-name (已完成) | TODO
+```
+
+**示例**:
+```markdown
+### 获取审核分数
+
+**路径**: `/api/v1/chapters/{id}/audit-scores`
+**方法**: GET
+**实现方**: thread-api (B4)
+```
+
+```markdown
+### 批量状态查询
+
+**路径**: `/api/v1/chapters/batch_status/{task_id}`
+**方法**: GET
+**实现方**: TODO
+```

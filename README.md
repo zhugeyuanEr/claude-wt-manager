@@ -23,8 +23,11 @@ Thread-infra (Level 0: Infrastructure)
     │                   │
     │                   └──▶ Thread-advanced (Level 3: Advanced)
     │
-    └──▶ Thread-advanced (can use D's test framework directly)
+    └──────────────────────▶ Thread-advanced (parallel track)
 ```
+
+**Note**: thread-advanced can start after thread-infra (uses shared test framework),
+but officially merges last after all other threads complete.
 
 ## Installation
 
@@ -78,6 +81,7 @@ cd your-project/worktree-thread-ux
 | `/wt-status` | Show all worktree status | No |
 | `/wt-progress` | Check progress | Yes |
 | `/wt-qa` | Quality inspection | Yes |
+| `/wt-batch-qa` | Batch quality inspection | No |
 | `/wt-contract` | Interface contract check | No |
 | `/wt-merge-check` | Pre-merge validation | Yes |
 | `/wt-report` | Full progress report | No |
@@ -340,6 +344,19 @@ worktree-thread-{name}
 └── worktree-thread-infra    # Infrastructure
 ```
 
+## PLAN File Naming Convention
+
+Each worktree requires a PLAN file for progress tracking:
+
+| Thread | PLAN File |
+|--------|-----------|
+| thread-infra | `THREAD-INFRA-PLAN.md` |
+| thread-api | `THREAD-API-PLAN.md` |
+| thread-ux | `THREAD-UX-PLAN.md` |
+| thread-advanced | `THREAD-ADVANCED-PLAN.md` |
+
+**Format**: `THREAD-{THREAD-NAME}-PLAN.md` (all uppercase)
+
 ## Configuration
 
 ### Creating Worktrees
@@ -387,6 +404,7 @@ claude-wt-manager/
 │       ├── wt-status.md
 │       ├── wt-progress.md
 │       ├── wt-qa.md
+│       ├── wt-batch-qa.md
 │       ├── wt-contract.md
 │       ├── wt-merge-check.md
 │       ├── wt-report.md

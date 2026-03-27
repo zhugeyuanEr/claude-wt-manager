@@ -40,15 +40,19 @@
       },
       {
         "name": "wt-contract",
-        "description": "Interface contract checking"
+        "description": "Interface contract check"
       },
       {
         "name": "wt-merge-check",
         "description": "Pre-merge validation"
       },
       {
+        "name": "wt-batch-qa",
+        "description": "Batch quality inspection"
+      },
+      {
         "name": "wt-report",
-        "description": "Generate full progress report"
+        "description": "Full progress report"
       },
       {
         "name": "wt-dev",

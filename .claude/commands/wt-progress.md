@@ -11,9 +11,7 @@ Worktree 列表: !`git worktree list`
 
 ## Task
 
-1. 如果提供了线程名称，使用它
-2. 如果没有提供，尝试自动检测当前 worktree
-3. 如果是 "all"，检查所有线程
+wt-progress.sh 始终检查所有 worktree 的进度。
 
 运行 wt-progress.sh 脚本生成进度报告，包括：
 - 各线程进度条 (████░░░░░ 60%)
