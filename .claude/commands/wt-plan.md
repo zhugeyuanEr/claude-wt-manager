@@ -69,10 +69,34 @@ Level 3: thread-advanced (高级功能)
 最大: 6
 ```
 
+## 交互式输入
+
+当指定数量后，脚本会逐个询问每个 worktree 的：
+- **名称**: 默认依次为 thread-infra, thread-api, thread-ux 等，可自定义
+- **工作内容**: 该 worktree 负责的开发任务描述
+
+示例：
+```
+>>> 阶段3: 定义每个 Worktree 的工作内容...
+
+  --- Worktree 1/3 ---
+    名称 [thread-infra]:
+    工作内容: 搭建 CI/CD 流水线，配置 Docker 环境
+
+  --- Worktree 2/3 ---
+    名称 [thread-api]:
+    工作内容: 开发用户认证和权限管理 API
+
+  --- Worktree 3/3 ---
+    名称 [thread-ux]:
+    工作内容: 开发登录页面和仪表盘 UI
+```
+
 ## 输出内容
 
 - 项目分析摘要
-- 推荐策略及理由
-- 线程分配及职责
-- 依赖关系图
+- 每个 worktree 的名称和工作内容
+- 依赖关系图（自动根据 level 计算）
+- 详细规划表
 - 合并顺序: infra → api → ux → advanced
+- git worktree 创建命令

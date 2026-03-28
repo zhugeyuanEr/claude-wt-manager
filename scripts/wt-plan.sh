@@ -97,6 +97,111 @@ else
     fi
 fi
 
+# ============ 阶段4: 交互式输入工作内容 ============
+if [[ -n "$REQUESTED_COUNT" && -z "$ISSUES" ]]; then
+    echo ""
+    echo ">>> 阶段3: 定义每个 Worktree 的工作内容..."
+    echo ""
+
+    # 预设的线程名称（可用户自定义）
+    DEFAULT_NAMES=("thread-infra" "thread-api" "thread-ux" "thread-advanced" "thread-feature-a" "thread-feature-b")
+
+    # 读取每个 worktree 的信息
+    declare -a WORKTREE_NAMES=()
+    declare -a WORKTREE_TASKS=()
+
+    for ((i=1; i<=REQUESTED; i++)); do
+        echo "  --- Worktree $i/$REQUESTED ---"
+
+        # 默认名称
+        DEFAULT_NAME="${DEFAULT_NAMES[$((i-1))]}"
+        [[ -z "$DEFAULT_NAME" ]] && DEFAULT_NAME="thread-$i"
+
+        # 读取名称
+        read -p "    名称 [${DEFAULT_NAME}]: " NAME
+        NAME="${NAME:-$DEFAULT_NAME}"
+        WORKTREE_NAMES+=("$NAME")
+
+        # 读取工作内容
+        echo -n "    工作内容: "
+        read TASK
+        WORKTREE_TASKS+=("${TASK:-未指定}")
+
+        echo ""
+    done
+
+    # ============ 阶段5: 生成规划方案 ============
+    echo ""
+    echo "================================================================"
+    echo "                      Worktree 规划方案"
+    echo "================================================================"
+    echo ""
+
+    # 计算依赖关系
+    echo "  依赖关系图:"
+    echo ""
+    for ((i=0; i<REQUESTED; i++)); do
+        LEVEL=$((i))
+
+        # 绘制箭头
+        if [[ $i -eq 0 ]]; then
+            echo "  ★ ${WORKTREE_NAMES[$i]} (Level $LEVEL)"
+        else
+            INDENT=""
+            for ((j=0; j<i; j++)); do
+                INDENT="    $INDENT"
+            done
+            echo "${INDENT}↓"
+            echo "${INDENT}★ ${WORKTREE_NAMES[$i]} (Level $LEVEL)"
+        fi
+
+        # 依赖说明
+        if [[ $i -eq 0 ]]; then
+            echo "    └── 无依赖，可独立开发"
+        else
+            echo "    └── 依赖: ${WORKTREE_NAMES[$((i-1))]}"
+        fi
+        echo ""
+    done
+
+    echo "----------------------------------------------------------------"
+    echo "                      详细规划表"
+    echo "----------------------------------------------------------------"
+    echo ""
+
+    printf "  %-20s | %-10s | %s\n" "线程名称" "Level" "工作内容"
+    printf "  %-20s-+-%-10s-+-%s\n" "--------------------" "----------" "----------------------------------------------------------------"
+
+    for ((i=0; i<REQUESTED; i++)); do
+        printf "  %-20s | %-10s | %s\n" "${WORKTREE_NAMES[$i]}" "Level $i" "${WORKTREE_TASKS[$i]}"
+    done
+
+    echo ""
+    echo "----------------------------------------------------------------"
+    echo "                      合并顺序"
+    echo "----------------------------------------------------------------"
+    echo ""
+    echo "  警告: 必须按 Level 从低到高合并！"
+    echo ""
+
+    MERGE_ORDER=""
+    for ((i=0; i<REQUESTED; i++)); do
+        [[ $i -gt 0 ]] && MERGE_ORDER+=" → "
+        MERGE_ORDER+="${WORKTREE_NAMES[$i]}"
+    done
+    echo "  合并顺序: $MERGE_ORDER"
+    echo ""
+
+    echo "================================================================"
+    echo ""
+    echo "  提示: 使用 'git worktree add' 创建 worktree:"
+    echo ""
+    for ((i=0; i<REQUESTED; i++)); do
+        echo "    git worktree add worktree-${WORKTREE_NAMES[$i]} -b ${WORKTREE_NAMES[$i]}"
+    done
+    echo ""
+fi
+
 echo ""
 wt_footer
 [[ -z "$REQUESTED_COUNT" ]] && echo "提示: 运行 './wt-plan.sh N' 可生成 N 个 worktree 的详细规划"
